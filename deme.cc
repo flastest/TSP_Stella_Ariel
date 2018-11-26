@@ -6,23 +6,19 @@
 #include "chromosome.hh"
 #include "deme.hh"
 #include <random>
+#include <iostream>
 
 // Generate a Deme of the specified size with all-random chromosomes.
 // Also receives a mutation rate in the range [0-1].
 Deme::Deme(const Cities* cities_ptr, unsigned pop_size, double mut_rate)
+: pop_(pop_size), mut_rate_(mut_rate)
 {
-  std::vector<Chromosome*> pop_(pop_size);
-
-
   for (int i = 0; i < pop_size; i++){
   	//creates a chromosome based on cities_ptr.
   	Chromosome* newGuy = new Chromosome(cities_ptr);
 
   	pop_[i] = newGuy;
   }
-  mut_rate_ = mut_rate;
-
-
 
 }
 
@@ -45,7 +41,8 @@ Deme::~Deme()
 void Deme::compute_next_generation()
 {
   // make 2 parents
-  for (int i = 0; i < pop_.size(); i++){ 
+  std::vector<Chromosome*> new_gen;
+  for (int i = 0; i < pop_.size(); i++){
     Chromosome* parent1 = select_parent();
     Chromosome* parent2 = select_parent();
     int mut_num = rand() % (100*1000); 
@@ -60,8 +57,14 @@ void Deme::compute_next_generation()
       parent1->Chromosome::mutate();
     }
     std::pair<Chromosome*, Chromosome*> new_children = parent1->recombine(parent2);
+    new_gen.push_back(new_children.first);
+    new_gen.push_back(new_children.second);
+  }
+ for (int i = 0; i < pop_.size(); i++) {
+  	pop_[i] = nullptr;
   }
 
+  pop_ = new_gen;
   // take random number and check for mutation
   
 }
@@ -72,9 +75,7 @@ const Chromosome* Deme::get_best() const
 {
   Chromosome* mostFit = pop_[0];
   double shortestDist = mostFit->get_fitness();
-
   for(int i = 1; i < pop_.size(); i++){
-  
   	if (pop_[i]->get_fitness()>shortestDist){
   		mostFit = pop_[i];
   	}

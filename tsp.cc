@@ -87,6 +87,7 @@ Cities::permutation_t ga_search(const Cities& cities,
                                 unsigned pop_size,
                                 double mutation_rate)
 {
+
   auto best_dist = 1e100;
   auto best_ordering = Cities::permutation_t(cities.size());
 
@@ -96,7 +97,6 @@ Cities::permutation_t ga_search(const Cities& cities,
   // the shortest distance generated
   for (long i = 1; i <= iters/pop_size; ++i) {
     deme.compute_next_generation();    // generate next generation
-
     // Find best individual in this population
     const auto ordering = deme.get_best()->get_ordering();
     if (is_improved(cities, ordering, best_dist, i * pop_size)) {
@@ -110,6 +110,9 @@ Cities::permutation_t ga_search(const Cities& cities,
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
+
+
+
   if (argc != 4) {
     std::cerr << "Required arguments: filename for cities, population size, and mutation rate\n";
     return -1;
@@ -119,7 +122,6 @@ int main(int argc, char** argv)
   const auto pop_size = atoi(argv[2]);
   const auto mut_rate = atof(argv[3]);
   constexpr unsigned NUM_ITER = 100000;
-
 
 //  const auto best_ordering = exhaustive_search(cities);
 //  const auto best_ordering = randomized_search(cities, NUM_ITER);
